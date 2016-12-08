@@ -21,7 +21,7 @@
     [super viewDidLoad];
     self.numberTableView.delegate = self;
     self.numberTableView.dataSource = self;
-    self.numbers = [[NSMutableArray alloc] init];
+    self.numbers = [@[@0, @1] mutableCopy];
     self.counter = 0;
     self.limiter = 100;
 }
@@ -37,9 +37,7 @@
 
 -(void)startInfiniteLoop {
     while (self.counter < self.limiter) {
-        NSNumber *nextNumber = [self fibonacciNumberAtIndex:self.counter];
-        NSLog(@"Next number is %@", nextNumber);
-        [self.numbers addObject:nextNumber];
+        [self fiboNumber];
         self.counter++;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -48,31 +46,40 @@
     self.limiter = self.counter + 100;
 }
 
--(NSNumber *)fibonacciNumberAtIndex:(long long)index {
-    NSMutableArray *fibonacciNumbers = [@[@0, @1]mutableCopy];
-    if (index == 0) {
-        return @0;
-    }
-    if (index == 1) {
-        return @1;
-    }
-    for (NSInteger i = 0; i < index - 1; i++) {
-        NSNumber *mostRecentNumber = fibonacciNumbers[fibonacciNumbers.count -1];
-        NSNumber *secondMostRecentFiboNumber = fibonacciNumbers[fibonacciNumbers.count -2];
+-(void)fiboNumber {
+        NSNumber *mostRecentNumber = self.numbers[self.numbers.count -1];
+        NSNumber *secondMostRecentFiboNumber = self.numbers[self.numbers.count -2];
         NSUInteger thisFiboNumber = mostRecentNumber.unsignedLongLongValue + secondMostRecentFiboNumber.unsignedLongLongValue;
         NSNumber *theFiboNumber = @(thisFiboNumber);
-        [fibonacciNumbers addObject:theFiboNumber];
-    }
-    NSNumber *theNextFiboNumber = fibonacciNumbers.lastObject;
-    return theNextFiboNumber;
+        NSLog(@"fibo number being added %@", theFiboNumber);
+        [self.numbers addObject:theFiboNumber];
 }
+
+//-(NSNumber *)fibonacciNumberAtIndex:(long long)index {
+//    NSMutableArray *fibonacciNumbers = [@[@0, @1]mutableCopy];
+//    if (index == 0) {
+//        return @0;
+//    }
+//    if (index == 1) {
+//        return @1;
+//    }
+//    for (NSInteger i = 0; i < index - 1; i++) {
+//        NSNumber *mostRecentNumber = fibonacciNumbers[fibonacciNumbers.count -1];
+//        NSNumber *secondMostRecentFiboNumber = fibonacciNumbers[fibonacciNumbers.count -2];
+//        NSUInteger thisFiboNumber = mostRecentNumber.unsignedLongLongValue + secondMostRecentFiboNumber.unsignedLongLongValue;
+//        NSNumber *theFiboNumber = @(thisFiboNumber);
+//        [fibonacciNumbers addObject:theFiboNumber];
+//    }
+//    NSNumber *theNextFiboNumber = fibonacciNumbers.lastObject;
+//    return theNextFiboNumber;
+//}
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"%lu", self.numbers.count);
+    NSLog(@"objects in the array %lu", self.numbers.count);
     return self.numbers.count;
 }
 
